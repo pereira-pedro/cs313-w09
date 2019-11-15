@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const model = require("model");
+const model = require("./USPS").default;
 const PORT = process.env.PORT || 5000;
 const uniqid = require("uniqid");
 
@@ -20,9 +20,7 @@ express()
       ounces: req.ounces
     };
 
-    const m = new model.USPS();
-
-    m.query(request, res => {
+    model.query(request, res => {
       console.log(res);
       //  res.render('pages/index')
     });
