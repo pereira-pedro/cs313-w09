@@ -1,9 +1,9 @@
-import { parseString } from "xml2js";
+const parseString = require("xml2js").parseString;
 
-import { get } from "https";
-import { Builder } from "xml2js";
+const https = require("https");
+var xml2js = require("xml2js");
 
-export default class USPS {
+module.exports = class USPS {
   constructor() {
     this.url = "https://production.shippingapis.com/ShippingAPI.dll?API=RateV4";
     this.user = "813BYUI05357";
@@ -12,31 +12,33 @@ export default class USPS {
   query(req, handler) {
     const xml = this.buildRequest(req);
 
-    get(`${this.url}&XML=${xml}`, resp => {
-      let data = "";
+    https
+      .get(`${this.url}&XML=${xml}`, resp => {
+        let data = "";
 
-      // A chunk of data has been recieved.
-      resp.on("data", chunk => {
-        data += chunk;
-      });
-
-      // The whole response has been received. Print out the result.
-      resp.on("end", () => {
-        var obj;
-        parseString(data, (err, result) => {
-          console.log(result);
-          obj = result;
+        // A chunk of data has been recieved.
+        resp.on("data", chunk => {
+          data += chunk;
         });
 
-        handler(obj);
+        // The whole response has been received. Print out the result.
+        resp.on("end", () => {
+          var obj;
+          parseString(data, (err, result) => {
+            console.log(result);
+            obj = result;
+          });
+
+          handler(obj);
+        });
+      })
+      .on("error", err => {
+        console.log("Error: " + err.message);
       });
-    }).on("error", err => {
-      console.log("Error: " + err.message);
-    });
   }
 
   buildRequest(req) {
-    var builder = new Builder();
+    var builder = new xml2js.Builder();
     let obj = {
       RateV4Request: {
         $: {
@@ -84,7 +86,7 @@ export default class USPS {
 
     return builder.buildObject(obj);
   }
-}
+};
 
 /*<RateV4Request USERID="xxxx">
 <Revision>2</Revision>
