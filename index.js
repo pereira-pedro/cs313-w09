@@ -1,8 +1,8 @@
 const express = require("express");
 const path = require("path");
-const model = require("./USPS");
 const PORT = process.env.PORT || 5000;
 const uniqid = require("uniqid");
+import USPS from "USPS";
 
 express()
   .use(express.static(path.join(__dirname, "public")))
@@ -22,7 +22,7 @@ express()
 
     console.log(model);
 
-    const m = new model.USPS();
+    const m = new USPS();
 
     m.query(request, res => {
       console.log(res);
