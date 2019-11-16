@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const PORT = process.env.PORT || 5000;
 const uniqid = require("uniqid");
-import USPS from "USPS";
+const USPS = require("./USPS.js");
 
 express()
   .use(express.static(path.join(__dirname, "public")))
