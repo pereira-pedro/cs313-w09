@@ -5,13 +5,8 @@
   </head>
 
   <body>
-    <% include ../partials/nav.ejs %>
-
     <div class="jumbotron text-center">
       <div class="container">
-        <a href="/" class="lang-logo">
-          <img src="/lang-logo.png" />
-        </a>
         <h1>BYU - Idaho - CS 313 - Fall 2019</h1>
         <p>09 Prove : Assignment - Postal Rate Calculator<br />Pedro Pereira</p>
         <a
@@ -24,14 +19,25 @@
       </div>
     </div>
     <div class="container">
+      <% if( locals.result ) {%> <% if( locals.result.Package.Error ) {%>
+      <div class="alert alert-danger text-center" role="alert">
+        Error: <%=result.Package.Error.Description%>
+      </div>
+      <% } } else {%>
+
       <div class="alert alert-info text-center" role="alert">
         Use form below to calculate USPS postal rate.
       </div>
+
+      <% }%>
+
       <hr />
       <div class="row">
+        <!-- action="https://fierce-beyond-50395.herokuapp.com/getRate/" -->
         <form
-          method="GET"
-          action="https://fierce-beyond-50395.herokuapp.com/getRate/"
+          class="form-horizontal"
+          method="POST"
+          action="http://localhost:5000/getRate"
         >
           <div class="form-group">
             <label for="origin">Originating ZIP</label>
@@ -39,7 +45,9 @@
               type="number"
               class="form-control"
               id="origin"
+              name="origin"
               placeholder="Originating ZIP"
+              value="<%=locals.request.origin%>"
             />
           </div>
           <div class="form-group">
@@ -48,32 +56,108 @@
               type="number"
               class="form-control"
               id="destination"
+              name="destination"
               placeholder="Destination ZIP"
+              value="<%=locals.request.destination%>"
             />
           </div>
           <div class="form-group">
-            <label for="pounds">Weight (pounds)</label>
+            <label for="weight">Weight</label>
             <input
               type="number"
+              pattern="[0-9]+([\.,][0-9]+)?"
+              step="0.01"
               class="form-control"
-              id="pounds"
-              placeholder="Pounds"
+              id="weight"
+              name="weight"
+              placeholder="Weight"
+              value="<%=locals.request.weight%>"
             />
+            <label class="radio-inline">
+              <input type="radio" id="unit1" name="unit" value="lb"
+              <%=locals.request.unit === 'lb' ? 'checked' : ''%>/> lb
+            </label>
+            <label class="radio-inline">
+              <input type="radio" id="unit2" name="unit" value="oz"
+              <%=locals.request.unit === 'oz' ? 'checked' : ''%>/> oz
+            </label>
           </div>
           <div class="form-group">
-            <label for="exampleInputFile">File input</label>
-            <select class="form-control">
-              <option value="LETTER">Letters (Stamped)</option>
-              <option value="LETTER">Letters (Metered)</option>
-              <option value="FLAT">Large Envelopes (Flats)</option>
-              <option value="PACKAGE SERVICE RETAIL"
-                >First-Class Package Service—Retail</option
-              >
-            </select>
+            <label for="type">Type</label>
+            <div id="type'">
+              <label class="radio-inline">
+                <input type="radio" id="type1" name="type" value="LETTER"
+                <%=locals.request.type === 'LETTER' ? 'checked' : ''%>/> Letters
+                (Stamped)
+              </label>
+              <label class="radio-inline">
+                <input type="radio" id="type2" name="type" value="LETTER"
+                <%=locals.request.type === 'LETTER' ? 'checked' : ''%>/> Letters
+                (Metered)
+              </label>
+              <label class="radio-inline">
+                <input type="radio" id="type3" name="type" value="LETTER"
+                <%=locals.request.type === 'FLAT' ? 'checked' : ''%>/> Large
+                Envelopes (Flats)
+              </label>
+              <label class="radio-inline">
+                <input type="radio" id="type4" name="type" value="LETTER"
+                <%=locals.request.type === 'PACKAGE SERVICE RETAIL' ? 'checked'
+                : ''%>/>First-Class Package Service—Retail
+              </label>
+            </div>
           </div>
-          <button type="submit" class="btn btn-default">Submit</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+
+        <div class="panel panel-default" style="margin-top: 1.5em;">
+          <div class="panel-body">
+            <% if( locals.result ) {%>
+            <table class="table">
+              <tr>
+                <td>Service:</td>
+                <td><%-result.Package.Postage.MailService%></td>
+              </tr>
+              <tr>
+                <td>Price:</td>
+                <td><%=result.Package.Postage.Rate%></td>
+              </tr>
+            </table>
+
+            <p class="lead">Special Services:</p>
+
+            <table class="table table-striped">
+              <thead>
+                <th>Name</th>
+                <th align="right">Price</th>
+              </thead>
+              <%
+              result.Package.Postage.SpecialServices.SpecialService.forEach(function(r)
+              { %>
+              <tbody>
+                <td>
+                  <%-r.ServiceName%>
+                </td>
+                <td align="right">
+                  <%=r.Price%>
+                </td>
+              </tbody>
+              <% }); %>
+            </table>
+            <%}%>
+          </div>
+        </div>
       </div>
     </div>
+    <script>
+      $(function() {
+        $("form").attr(
+          "action",
+          window.location.hostname.startsWith("localhost")
+            ? "http://localhost:5000"
+            : "https://immense-thicket-27185.herokuapp.com"
+        );
+      });
+    </script>
   </body>
 </html>
