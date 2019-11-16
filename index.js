@@ -20,8 +20,6 @@ express()
       ounces: req.ounces
     };
 
-    console.log(model);
-
     const m = new USPS();
 
     m.query(request, res => {
