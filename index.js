@@ -22,7 +22,9 @@ express()
 
     console.log(model);
 
-    model.query(request, res => {
+    const m = new model.USPS();
+
+    m.query(request, res => {
       console.log(res);
       //  res.render('pages/index')
     });
