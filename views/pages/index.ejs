@@ -47,7 +47,7 @@
               id="origin"
               name="origin"
               placeholder="Originating ZIP"
-              value="<%=locals.request.origin%>"
+              value="<%=locals.request ? locals.request.origin : ''%>"
             />
           </div>
           <div class="form-group">
@@ -58,7 +58,7 @@
               id="destination"
               name="destination"
               placeholder="Destination ZIP"
-              value="<%=locals.request.destination%>"
+              value="<%=locals.request ? locals.request.destination : ''%>"
             />
           </div>
           <div class="form-group">
@@ -71,15 +71,17 @@
               id="weight"
               name="weight"
               placeholder="Weight"
-              value="<%=locals.request.weight%>"
+              value="<%=locals.request ? locals.request.weight : ''%>"
             />
             <label class="radio-inline">
               <input type="radio" id="unit1" name="unit" value="lb"
-              <%=locals.request.unit === 'lb' ? 'checked' : ''%>/> lb
+              <%=locals.request && locals.request.unit === 'lb' ? 'checked' :
+              ''%>/> lb
             </label>
             <label class="radio-inline">
               <input type="radio" id="unit2" name="unit" value="oz"
-              <%=locals.request.unit === 'oz' ? 'checked' : ''%>/> oz
+              <%=locals.request && locals.request.unit === 'oz' ? 'checked' :
+              ''%>/> oz
             </label>
           </div>
           <div class="form-group">
@@ -87,23 +89,22 @@
             <div id="type'">
               <label class="radio-inline">
                 <input type="radio" id="type1" name="type" value="LETTER"
-                <%=locals.request.type === 'LETTER' ? 'checked' : ''%>/> Letters
-                (Stamped)
+                <%=locals.request && locals.request.type === 'LETTER' ?
+                'checked' : ''%>/> Letters (Stamped)
               </label>
               <label class="radio-inline">
                 <input type="radio" id="type2" name="type" value="LETTER"
-                <%=locals.request.type === 'LETTER' ? 'checked' : ''%>/> Letters
-                (Metered)
+                <%=locals.request && locals.request.type === 'LETTER' ?
+                'checked' : ''%>/> Letters (Metered)
               </label>
               <label class="radio-inline">
                 <input type="radio" id="type3" name="type" value="LETTER"
-                <%=locals.request.type === 'FLAT' ? 'checked' : ''%>/> Large
-                Envelopes (Flats)
+                <%=locals.request && locals.request.type === 'FLAT' ? 'checked'
+                : ''%>/> Large Envelopes (Flats)
               </label>
               <label class="radio-inline">
                 <input type="radio" id="type4" name="type" value="LETTER"
-                <%=locals.request.type === 'PACKAGE SERVICE RETAIL' ? 'checked'
-                : ''%>/>First-Class Package Service—Retail
+                <%=locals.request && locals.request.type === 'PACKAGE SERVICE RETAIL' ? 'checked' : ''%>/>First-Class Package Service—Retail
               </label>
             </div>
           </div>
@@ -154,7 +155,7 @@
         $("form").attr(
           "action",
           window.location.hostname.startsWith("localhost")
-            ? "http://localhost:5000"
+            ? "http://localhost:5000/getRate"
             : "https://fierce-beyond-50395.herokuapp.com/"
         );
       });
